@@ -1,12 +1,16 @@
 <template>
-  <section class="py-16">
-    <h2 class="text-center font-bold mb-2" style="font-size: 42px">
+  <section class="md:py-16 my-10">
+    <h2
+      class="text-center font-bold mb-2 md:text-4xl text-2xl w-52 md:w-full mx-auto"
+    >
       ¡Solicita aquí tu <span class="text-orange-500">préstamo!</span>
     </h2>
-    <h3 class="text-center font-bold text-xl">
+    <h3 class="text-center font-bold md:text-xl text-sm w-52 md:w-full mx-auto">
       Es muy fácil y rápido, sólo ingresa tus datos.
     </h3>
-    <div class="shadow-lg rounded max-w-3xl mx-auto my-16 overflow-hidden">
+    <div
+      class="shadow-lg rounded max-w-3xl mx-auto my-16 overflow-hidden md:w-full w-80 mx-auto"
+    >
       <div
         class="relative flex top-0 left-0 transition-all duration-500 ease"
         ref="stepsWrapper"
@@ -711,5 +715,9 @@ input[type="radio"] {
 
 label {
   font-size: 14px;
+}
+
+.radio-group label {
+  @apply text-xs md:text-sm;
 }
 </style>
