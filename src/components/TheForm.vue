@@ -11,147 +11,44 @@
     <div
       class="shadow-lg rounded max-w-3xl mx-auto my-16 overflow-hidden md:w-full w-80 mx-auto"
     >
+      <div v-show="noAplica" class="p-8" ref="noAplica">
+        <p v-html="mensaje"></p>
+      </div>
       <div
+        v-show="!noAplica"
         class="relative flex top-0 left-0 transition-all duration-500 ease"
         ref="stepsWrapper"
       >
         <div class="step min-w-full py-8 px-6" style="height: min-content">
-          <form @submit.prevent>
-            <p class="input-label">
-              ¿En qué estado de la República mexicana laboras?
-              <span class="text-red-500 text-lg">*</span>
-            </p>
-            <select v-model="form.step0_estadoLabora" class="input">
-              <option value="Veracruz">Veracruz</option>
-              <option value="Guanajuato">Guanajuato</option>
-              <option value="Puebla">Puebla</option>
-              <option value="Guerrero">Guerrero</option>
-              <option value="Otro">Otro</option>
-            </select>
-            <errors-list :errors="v$.form.step0_estadoLabora.$errors" />
-          </form>
+          <p class="input-label">
+            ¿En qué estado de la República mexicana laboras?
+            <span class="text-red-500 text-lg">*</span>
+          </p>
+          <select v-model="form.step0_estadoLabora" class="input">
+            <option value="Veracruz">Veracruz</option>
+            <option value="Guanajuato">Guanajuato</option>
+            <option value="Puebla">Puebla</option>
+            <option value="Guerrero">Guerrero</option>
+            <option value="otro">Otro</option>
+          </select>
+          <errors-list :errors="v$.form.step0_estadoLabora.$errors" />
         </div>
         <div class="step min-w-full py-8 px-6" style="height: min-content">
           <p class="input-label">
             ¿Laboras en algunas de las siguientes empresas, dependencias o
-            sindicatos en Veracruz? <span class="text-red-500 text-lg">*</span>
+            sindicatos en {{ form.step0_estadoLabora }}?
+            <span class="text-red-500 text-lg">*</span>
           </p>
           <div class="radio-group">
-            <div>
-              <input
-                type="radio"
-                name="ipe"
-                value="ipe"
-                v-model="form.step1_entidad"
-              />
-              <label for="ipe"
-                >IPE (Instituto de Pensiones del Estado de Veracruz)</label
+            <div v-for="radio in radioGroupEntidad" :key="radio.name">
+              <label>
+                <input
+                  type="radio"
+                  :value="radio.name"
+                  v-model="form.step1_entidad"
+                />
+                {{ radio.label }}</label
               >
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="uv"
-                value="uv"
-                v-model="form.step1_entidad"
-              />
-              <label for="uv">UV (Universidad Veracruzana)</label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="gob"
-                value="gob"
-                v-model="form.step1_entidad"
-              />
-              <label for="gob">Gobierno del Estado de Veracruz</label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="congreso"
-                value="congreso"
-                v-model="form.step1_entidad"
-              />
-              <label for="congreso">Congreso del Estado de Veracruz</label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="magisterio"
-                value="magisterio"
-                v-model="form.step1_entidad"
-              />
-              <label for="magisterio">Magisterio Estatal de Veracruz</label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="snt32"
-                value="snt32"
-                v-model="form.step1_entidad"
-              />
-              <label for="snt32">SNTE 32</label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="sesver"
-                value="sesver"
-                v-model="form.step1_entidad"
-              />
-              <label for="sesver"
-                >Secretaría de Salud de Veracruz (SESVER)</label
-              >
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="ivec"
-                value="ivec"
-                v-model="form.step1_entidad"
-              />
-              <label for="ivec"
-                >IVEC (Instituto veracruzano de la Cultura)</label
-              >
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="ux"
-                value="ux"
-                v-model="form.step1_entidad"
-              />
-              <label for="ux">Universidad de Xalapa</label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="cfe"
-                value="cfe"
-                v-model="form.step1_entidad"
-              />
-              <label for="cfe">CFE</label>
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="secretariaSeguridad"
-                value="secretariaSeguridad"
-                v-model="form.step1_entidad"
-              />
-              <label for="secretariaSeguridad"
-                >Secretaría de Seguridad Publica de Veracruz</label
-              >
-            </div>
-            <div>
-              <input
-                type="radio"
-                name="ninguna"
-                value="ninguna"
-                v-model="form.step1_entidad"
-              />
-              <label for="ninguna">Ninguna de las mencionadas</label>
             </div>
           </div>
           <errors-list :errors="v$.form.step1_entidad.$errors" />
@@ -164,42 +61,44 @@
             </p>
             <div class="radio-group">
               <div>
-                <input
-                  type="radio"
-                  name="eventual"
-                  value="eventual"
-                  v-model="form.step2_tipoContrato"
-                />
-                <label for="eventual">Eventual / Interinato</label>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  name="basePlaza"
-                  value="basePlaaza"
-                  v-model="form.step2_tipoContrato"
-                />
-                <label for="basePlaza">Base / Plaza</label>
-              </div>
-              <div>
-                <input
-                  type="radio"
-                  name="personalContrato"
-                  value="personalContrato"
-                  v-model="form.step2_tipoContrato"
-                />
-                <label for="personalContrato"
-                  >Personal de contrato o confianza</label
+                <label>
+                  <input
+                    type="radio"
+                    value="eventual"
+                    v-model="form.step2_tipoContrato"
+                  />
+                  Eventual / Interinato</label
                 >
               </div>
               <div>
-                <input
-                  type="radio"
-                  name="pensionado"
-                  value="pensionado"
-                  v-model="form.step2_tipoContrato"
-                />
-                <label for="pensionado">Pensionado</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="basePlaaza"
+                    v-model="form.step2_tipoContrato"
+                  />
+                  Base / Plaza</label
+                >
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="radio"
+                    value="personalContrato"
+                    v-model="form.step2_tipoContrato"
+                  />
+                  Personal de contrato o confianza</label
+                >
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="radio"
+                    value="pensionado"
+                    v-model="form.step2_tipoContrato"
+                  />
+                  Pensionado</label
+                >
               </div>
             </div>
             <errors-list :errors="v$.form.step2_tipoContrato.$errors" />
@@ -239,49 +138,49 @@
             </p>
             <div class="radio-group">
               <div>
-                <input
-                  type="radio"
-                  name="24"
-                  value="24"
-                  v-model="form.step2_plazoPago"
-                />
-                <label for="24">24 quincenas</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="24"
+                    v-model="form.step2_plazoPago"
+                  />24 quincenas</label
+                >
               </div>
               <div>
-                <input
-                  type="radio"
-                  name="36"
-                  value="36"
-                  v-model="form.step2_plazoPago"
-                />
-                <label for="36">36 quincenas</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="36"
+                    v-model="form.step2_plazoPago"
+                  />36 quincenas</label
+                >
               </div>
               <div>
-                <input
-                  type="radio"
-                  name="48"
-                  value="48"
-                  v-model="form.step2_plazoPago"
-                />
-                <label for="48">48 quincenas</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="48"
+                    v-model="form.step2_plazoPago"
+                  />48 quincenas</label
+                >
               </div>
               <div>
-                <input
-                  type="radio"
-                  name="72"
-                  value="72"
-                  v-model="form.step2_plazoPago"
-                />
-                <label for="72">72 quincenas</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="72"
+                    v-model="form.step2_plazoPago"
+                  />72 quincenas</label
+                >
               </div>
               <div>
-                <input
-                  type="radio"
-                  name="96"
-                  value="96"
-                  v-model="form.step2_plazoPago"
-                />
-                <label for="96">96 quincenas</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="96"
+                    v-model="form.step2_plazoPago"
+                  />96 quincenas</label
+                >
               </div>
             </div>
             <errors-list :errors="v$.form.step2_plazoPago.$errors" />
@@ -290,16 +189,26 @@
             <p class="input-label">¿Eres o has sido cliente de Intermercado?</p>
             <div class="radio-group">
               <div>
-                <input type="radio" name="24" />
-                <label for="24">Si</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="si"
+                    v-model="form.step2_clientePrevio"
+                  />
+                  Si</label
+                >
               </div>
               <div>
-                <input type="radio" name="36" />
-                <label for="36">No</label>
+                <label>
+                  <input type="radio" value="no" />
+                  No</label
+                >
               </div>
               <div>
-                <input type="radio" name="48" />
-                <label for="48">No recuerdo</label>
+                <label>
+                  <input type="radio" value="noRecuerdo" />
+                  No recuerdo</label
+                >
               </div>
             </div>
           </div>
@@ -310,35 +219,87 @@
             </p>
             <div class="radio-group">
               <div>
-                <input type="radio" name="24" />
-                <label for="24">Vacaciones, viaje</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="vacaciones"
+                    v-model="form.step2_intencionCredito"
+                  />
+                  Vacaciones, viaje</label
+                >
               </div>
               <div>
-                <input type="radio" name="36" />
-                <label for="36">Comprar, repara un vehículo</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="vehiculo"
+                    v-model="form.step2_intencionCredito"
+                  />
+                  Comprar, reparar un vehículo</label
+                >
               </div>
               <div>
-                <input type="radio" name="48" />
-                <label for="48">Invertir en un negocio</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="negocio"
+                    v-model="form.step2_intencionCredito"
+                  />
+                  Invertir en un negocio</label
+                >
               </div>
               <div>
-                <input type="radio" name="48" />
-                <label for="48">Renovación de casa</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="renovacionCasa"
+                    v-model="form.step2_intencionCredito"
+                  />
+                  Renovación de casa</label
+                >
               </div>
               <div>
-                <input type="radio" name="48" />
-                <label for="48">Evento, celebración</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="evento"
+                    v-model="form.step2_intencionCredito"
+                  />
+                  Evento, celebración</label
+                >
               </div>
               <div>
-                <input type="radio" name="48" />
-                <label for="48">Pagar unos imprevistos</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="imprevistos"
+                    v-model="form.step2_intencionCredito"
+                  />
+                  Pagar unos imprevistos</label
+                >
               </div>
               <div>
-                <input type="radio" name="48" />
-                <label for="48">Unificar deudas</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="unificarDeudas"
+                    v-model="form.step2_intencionCredito"
+                  />
+                  Unificar deudas</label
+                >
               </div>
               <div>
-                <input type="text" placeholder="otro" class="input" />
+                <input
+                  type="radio"
+                  value="otro"
+                  v-model="form.step2_intencionCredito"
+                />
+                <input
+                  type="text"
+                  placeholder="otro"
+                  class="input"
+                  :disabled="getOtroSeleccionado"
+                />
               </div>
             </div>
           </div>
@@ -351,22 +312,23 @@
             </p>
             <div class="radio-group">
               <div>
-                <input
-                  type="radio"
-                  name="eventual"
-                  value="hombre"
-                  v-model="form.step3_genero"
-                />
-                <label for="eventual">Hombre</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="hombre"
+                    v-model="form.step3_genero"
+                  />Hombre</label
+                >
               </div>
               <div>
-                <input
-                  type="radio"
-                  name="basePlaza"
-                  value="basePlaza"
-                  v-model="form.step3_genero"
-                />
-                <label for="basePlaza">Mujer</label>
+                <label>
+                  <input
+                    type="radio"
+                    value="basePlaza"
+                    v-model="form.step3_genero"
+                  />
+                  Mujer</label
+                >
               </div>
             </div>
             <errors-list :errors="v$.form.step3_genero.$errors" />
@@ -416,7 +378,11 @@
           </div>
           <div class="mt-4">
             <p class="input-label">Apellido materno:</p>
-            <input type="text" class="input" />
+            <input
+              type="text"
+              class="input"
+              v-model="form.step3_apellidoMaterno"
+            />
           </div>
           <div class="mt-4">
             <p class="input-label">
@@ -452,34 +418,62 @@
             </p>
             <div>
               <div>
-                <input type="checkbox" name="correo" />
-                <label for="correo">Correo electrónico</label>
+                <label>
+                  <input
+                    type="checkbox"
+                    v-model="form.step3_medioContacto.correo"
+                  />
+                  Correo electrónico</label
+                >
               </div>
               <div>
-                <input type="checkbox" name="telCasa" />
-                <label for="telCasa">Teléfono de casa</label>
+                <label>
+                  <input
+                    type="checkbox"
+                    v-model="form.step3_medioContacto.telCasa"
+                  />
+                  Teléfono de casa</label
+                >
               </div>
               <div>
-                <input type="checkbox" name="telCel" />
-                <label for="telCel">Teléfono celular</label>
+                <label>
+                  <input
+                    type="checkbox"
+                    v-model="form.step3_medioContacto.celular"
+                  />
+                  Teléfono celular</label
+                >
               </div>
               <div>
-                <input type="checkbox" name="whats" />
-                <label for="whats">WhatsApp</label>
+                <label>
+                  <input
+                    type="checkbox"
+                    v-model="form.step3_medioContacto.whats"
+                  />
+                  WhatsApp</label
+                >
               </div>
             </div>
+            <errors-list :errors="medioContactoErrors" />
           </div>
           <div class="mt-4">
-            <input type="checkbox" name="aviso" v-model="form.step3_aviso" />
-            <label for="aviso"
-              >Estoy de acuerdo con el Aviso de Privacidad de GB Plus SA de CV
-              SOFOM ENR <span class="text-red-500 text-lg">*</span></label
+            <label>
+              <input type="checkbox" v-model="form.step3_aviso" />
+              Estoy de acuerdo con el
+              <a
+                href="http://intermercado.com.mx/aviso-de-privacidad/"
+                target="_blank"
+                class="font-weight-black text-cyan-500"
+                >Aviso de Privacidad</a
+              >
+              de GB Plus SA de CV SOFOM ENR
+              <span class="text-red-500 text-lg">*</span></label
             >
-            <errors-list :errors="v$.form.step3_aviso.$errors" />
+            <errors-list :errors="avisoPrivacidadErrors" />
           </div>
         </div>
       </div>
-      <div class="px-6 pb-8">
+      <div class="px-6 pb-8" v-if="!noAplica">
         <button
           v-if="currentStep > 0"
           class="btn btn-text"
@@ -497,7 +491,7 @@
         <button
           v-if="currentStep >= 3"
           class="btn btn-primary"
-          @click="btnSiguiente"
+          @click="btnEnviar"
         >
           Enviar solicitud de crédito
         </button>
@@ -535,7 +529,12 @@ export default {
   },
   data() {
     return {
+      avisoPrivacidadErrors: [],
+      medioContactoErrors: [],
+      mensaje: "",
+      radioGroupEntidad: [],
       currentStep: 0,
+      noAplica: false,
       form: {
         step0_estadoLabora: null,
         step1_entidad: null,
@@ -543,17 +542,31 @@ export default {
         step2_montoCredito: null,
         step2_ingresoMensual: null,
         step2_plazoPago: null,
+        step2_clientePrevio: null,
+        step2_intencionCredito: null,
         step3_genero: null,
         step3_edad: null,
         step3_rfc: null,
         step3_nombre: null,
         step3_apellidoPaterno: null,
+        step3_apellidoMaterno: null,
         step3_correo: null,
         step3_numCelular: null,
         step3_aviso: false,
         step3_numCasa: null,
+        step3_medioContacto: {
+          correo: false,
+          whats: false,
+          telCasa: false,
+          celular: false,
+        },
       },
     };
+  },
+  computed: {
+    getOtroSeleccionado() {
+      return this.form.step2_intencionCredito !== "otro";
+    },
   },
   validations() {
     return {
@@ -656,6 +669,7 @@ export default {
         step3_aviso: {
           sameAs: helpers.withMessage(
             "Debes aceptar el acuerdo de privacidad",
+            required,
             sameAs(() => true)
           ),
         },
@@ -666,23 +680,212 @@ export default {
     this.changeHeight();
   },
   methods: {
+    checkStep() {
+      this.checkEstado();
+      this.checkEntidad();
+      this.checkTipoContrato();
+    },
+    checkTipoContrato() {
+      if (this.currentStep !== 3) return;
+      if (this.form.step2_tipoContrato === "eventual") {
+        this.noAplica = true;
+        this.mensaje = `
+          Lo sentimos, en este momento otorgamos créditos exclusivamente a trabajadores del sector público con base/plaza, o personal de confianza/contrato con más de 3 años de antiguedad o bien pensionados, que laboran en las dependencias mencionadas.
+          <br /><br />
+          Te invitamos a seguirnos en Facebook para no perderte nuestras próximas aperturas de convenios.
+        `;
+      }
+    },
+    checkEntidad() {
+      if (this.currentStep !== 2) return;
+      if (this.form.step1_entidad === "ninguna") {
+        this.noAplica = true;
+        this.mensaje = `
+          Lo sentimos, en este momento otorgamos créditos exclusivamente a trabajadores del sector público con base/plaza, o personal de confianza/contrato con más de 3 años de antiguedad o bien pensionados, que laboran en las dependencias mencionadas.
+          <br /><br />
+          Te invitamos a seguirnos en Facebook para no perderte nuestras próximas aperturas de convenios.
+        `;
+      }
+    },
+    checkEstado() {
+      if (this.currentStep !== 1) return;
+      if (this.form.step0_estadoLabora === "Veracruz") {
+        this.radioGroupEntidad = [
+          {
+            name: "ipe",
+            label: "IPE (Instituto de Pensiones del Estado de Veracruz)",
+          },
+          {
+            name: "uv",
+            label: "UV (Universidad Veracruzana)",
+          },
+          {
+            name: "gob",
+            label: "Gobierno del Estado de Veracruz",
+          },
+          {
+            name: "congresoVeracruz",
+            label: "Congreso del Estado de Veracruz",
+          },
+          {
+            name: "magisterioEstatalVeracruz",
+            label: "Magisterio Estatal de Veracruz",
+          },
+          {
+            name: "snte32",
+            label: "SNTE 32",
+          },
+          {
+            name: "sesver",
+            label: "Secretaría de Salud de Veracruz (SESVER)",
+          },
+          {
+            name: "ivec",
+            label: "IVEC (Instituto veracruzano de la Cultura)",
+          },
+          {
+            name: "ux",
+            label: "Universidad de Xalapa",
+          },
+          {
+            name: "cfe",
+            label: "CFE",
+          },
+          {
+            name: "sspv",
+            label: "Secretaría de Seguridad Publica de Veracruz",
+          },
+          {
+            name: "ninguna",
+            label: "Ninguna de las mencionadas",
+          },
+        ];
+      }
+      if (this.form.step0_estadoLabora === "Guanajuato") {
+        this.radioGroupEntidad = [
+          {
+            name: "snte13",
+            label: "SNTE 13",
+          },
+          {
+            name: "snte45",
+            label: "SNTE 45",
+          },
+          {
+            name: "poderJudicialGuanajuato",
+            label: "Poder Judicial del Estado de Guanajuato",
+          },
+          {
+            name: "sabes",
+            label: "SABES",
+          },
+          {
+            name: "gobGuanajuato",
+            label: "Gobierno del Estado de Guanajuato",
+          },
+          {
+            name: "secretariaSaludGuanajuato",
+            label: "Secretaría de Salud de Guanajuato",
+          },
+          {
+            name: "ninguna",
+            label: "Ninguna",
+          },
+        ];
+      }
+      if (this.form.step0_estadoLabora === "Puebla") {
+        this.radioGroupEntidad = [
+          {
+            name: "gobPuebla",
+            label: "Gobierno del Estado de Puebla",
+          },
+          {
+            name: "snte23",
+            label: "SNTE 23 (Magisterio federal de Puebla)",
+          },
+          {
+            name: "snte51",
+            label: "SNTE 51 (Magisterio estatal de Puebla)",
+          },
+          {
+            name: "buap",
+            label: "BUAP (Benemérita Universidad Autónoma de Puebla)",
+          },
+          {
+            name: "issstep",
+            label: "ISSSTEP (Trabajador activo, pensionado o jubilado)",
+          },
+          {
+            name: "sectorSaludPuebla",
+            label: "Sector Salud de Puebla (Trabajadores Federales)",
+          },
+          {
+            name: "cecytePuebla",
+            label: "CECyTE Puebla",
+          },
+          {
+            name: "ayuntamientoPuebla",
+            label: "H. Ayuntamiento de Puebla",
+          },
+          {
+            name: "cobaep",
+            label: "COBAEP - Colegio de Bachilleres de Estado de Puebla",
+          },
+          {
+            name: "ninguna",
+            label: "Ninguna de las mencionadas",
+          },
+        ];
+      }
+      if (this.form.step0_estadoLabora === "Guerrero") {
+        this.radioGroupEntidad = [
+          {
+            name: "gobGuerrero",
+            label: "Gobierno del Estado de Guerrero",
+          },
+          {
+            name: "magisterioGuerrero",
+            label: "Magisterio Estatal de Guerrero",
+          },
+          {
+            name: "ninguna",
+            label: "Ninguna de las mencionadas",
+          },
+        ];
+      }
+      if (this.form.step0_estadoLabora === "otro") {
+        this.noAplica = true;
+        this.mensaje = `
+          Lo sentimos, en este momento otorgamos créditos exclusivamente a trabajadores del sector público en los estados de Guanajuato, Puebla, Veracruz y Guerrero.
+          <br /><br />
+          Te invitamos a seguirnos en Facebook para no perderte nuestras próximas aperturas de convenios.
+        `;
+      }
+    },
     toUpperCase() {
       event.target.value = event.target.value.toUpperCase();
     },
-    btnEnviar() {},
+    btnEnviar() {
+      if (!this.validForm()) return;
+      alert(
+        "Tu crédito se solicitó con éxito. Un asesor se comunicará contigo lo más pronto posible"
+      );
+    },
     btnSiguiente() {
       if (this.currentStep > 3) return;
       if (!this.validForm()) return;
       this.currentStep += 1;
+      this.checkStep();
       this.changeHeight();
     },
     btnAnterior() {
       if (this.currentStep <= 0) return;
-      if (!this.validForm()) return;
       this.currentStep -= 1;
+      this.checkStep();
       this.changeHeight();
     },
     changeHeight() {
+      if (this.noAplica) return;
       this.$refs.stepsWrapper.style.transform = `translateX(-${
         this.currentStep * 100
       }%)`;
@@ -691,17 +894,45 @@ export default {
       }px`;
     },
     validForm() {
+      let validForm = true;
+
+      if (this.currentStep === 3) {
+        this.medioContactoErrors = [];
+        this.avisoPrivacidadErrors = [];
+
+        if (!this.form.step3_aviso) {
+          validForm = false;
+          this.avisoPrivacidadErrors = [
+            {
+              $message:
+                "Debes aceptar el aviso de privacidad para poder solicitar tu crédito",
+            },
+          ];
+        }
+
+        const mediosSeleccionados = Object.values(
+          this.form.step3_medioContacto
+        ).filter((medio) => medio);
+
+        if (mediosSeleccionados.length === 0) {
+          validForm = false;
+          this.medioContactoErrors = [
+            { $message: "Selecciona un medio para poder contactarte" },
+          ];
+        }
+      }
+
       const fields = Object.keys(this.v$.form).filter((field) =>
         field.includes(`step${this.currentStep}`)
       );
 
-      let valid = true;
       fields.forEach((field) => {
         this.v$.form[field].$touch();
-        if (this.v$.form[field].$errors.length > 0) valid = false;
+        if (this.v$.form[field].$errors.length > 0) validForm = false;
       });
       this.$nextTick(() => this.changeHeight());
-      return valid;
+
+      return validForm;
     },
   },
 };
